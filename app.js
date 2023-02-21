@@ -1,17 +1,29 @@
 const express = require("express");
-const {getTopics} = require("./controllers/app.controller");
-const { handle500s } = require("./controllers/errorhandling.controller");
+const {
+  getTopics,
+  getArticles,
+  getArticle,
+} = require("./controllers/app.controller");
+const {
+  handle500s,
+  handle400s,
+  handleCustomErrors,
+} = require("./controllers/errorhandling.controller");
 
 const app = express();
-app.use(express.json());
-
-// app.use((request, response, next) => {
-//     console.log(request.url);
-//     next()
-// })
+//app.use(express.json());
 
 app.get("/api/topics", getTopics);
 
-app.use(handle500s)
+app.get("/api/articles", getArticles);
+
+app.get("/api/articles/:article_id", getArticle);
+
+app.use((request, response, next) => {
+  response.status(404).send({ msg: "Path Not Found" });
+});
+app.use(handle400s);
+app.use(handleCustomErrors);
+app.use(handle500s);
 
 module.exports = app;
