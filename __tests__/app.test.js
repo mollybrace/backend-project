@@ -85,13 +85,6 @@ describe("GET /api/articles/:article_id", () => {
       .then(({ body : {article}}) => {
         expect(article).toHaveLength(1);
         expect(article).toBeInstanceOf(Array);
-      });
-  });
-  test("200: Returns with article containing the correct keys", () => {
-    return request(app)
-    .get("/api/articles/1")
-    .expect(200)
-    .then(({body : {article}}) => {
       article.forEach((key) => {
         expect(key).toHaveProperty("author", expect.any(String));
         expect(key).toHaveProperty("title", expect.any(String));
