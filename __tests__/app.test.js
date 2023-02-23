@@ -3,8 +3,7 @@ const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
 const connection = require("../db/connection");
 const app = require("../app");
-const { response } = require("../app");
-require("jest-sorted")
+require("jest-sorted");
 
 beforeEach(() => {
   return seed(data);
@@ -69,48 +68,71 @@ describe("GET /api/articles", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body.articles).toBeSortedBy("created_at", {
-          descending: true
+          descending: true,
         });
       });
-      });
+  });
 });
 
 describe("GET /api/articles/:article_id", () => {
   test("200: Returns with specific article", () => {
     return request(app)
-    .get("/api/articles/1")
+      .get("/api/articles/1")
       .expect(200)
-      .then(({ body : {article}}) => {
+      .then(({ body: { article } }) => {
         expect(article).toHaveLength(1);
         expect(article).toBeInstanceOf(Array);
-      article.forEach((key) => {
-        expect(key).toHaveProperty("author", expect.any(String));
-        expect(key).toHaveProperty("title", expect.any(String));
-        expect(key).toHaveProperty("article_id", expect.any(Number));
-        expect(key).toHaveProperty("topic", expect.any(String));
-        expect(key).toHaveProperty("created_at", expect.any(String));
-        expect(key).toHaveProperty("votes", expect.any(Number));
-        expect(key).toHaveProperty("article_img_url", expect.any(String));
-        expect(key).toHaveProperty("body", expect.any(String));
-      })
-    })
-  })
-  test("400: Returns with invalid article request if given an invalid data request (ie: not a number)", () =>{
+        article.forEach((key) => {
+          expect(key).toHaveProperty("author", expect.any(String));
+          expect(key).toHaveProperty("title", expect.any(String));
+          expect(key).toHaveProperty("article_id", expect.any(Number));
+          expect(key).toHaveProperty("topic", expect.any(String));
+          expect(key).toHaveProperty("created_at", expect.any(String));
+          expect(key).toHaveProperty("votes", expect.any(Number));
+          expect(key).toHaveProperty("article_img_url", expect.any(String));
+          expect(key).toHaveProperty("body", expect.any(String));
+        });
+      });
+  });
+  test("400: Returns with invalid article request if given an invalid data request (ie: not a number)", () => {
     return request(app)
-    .get("/api/articles/invalid_article_id")
-    .expect(400)
-    .then((response) => {
-      expect(response.body.msg).toBe("Invalid Request")
-    })
-  })
+      .get("/api/articles/invalid_article_id")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Invalid Request");
+      });
+  });
   test("404: Returns with article ID not found if given a request of the correct data type that does not exist", () => {
     return request(app)
-    .get("/api/articles/3000")
-    .expect(404)
-    .then((response) =>{
-      expect(response.body.msg).toBe("Article ID Not Found")
-    })
-  })
+      .get("/api/articles/3000")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Article ID Not Found");
+      });
+  });
 });
+
+describe("GET: /api/users", () => {
+  test("200: Returns with a users containing the correct keys", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body: { users } }) => {
+        expect(users).toHaveLength(4);
+        expect(users).toBeInstanceOf(Array);
+        users.forEach((user) => {
+          expect(user).toHaveProperty("username", expect.any(String));
+          expect(user).toHaveProperty("name", expect.any(String));
+          expect(user).toHaveProperty("avatar_url", expect.any(String));
+
+
+
+        })
+       
+      });
+  });
+});
+
+

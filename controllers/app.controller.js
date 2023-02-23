@@ -1,5 +1,5 @@
 const { response } = require("../app");
-const { fetchTopics, fetchArticles, fetchArticle } = require("../models/app.models");
+const { fetchTopics, fetchArticles, fetchArticle, fetchUsers } = require("../models/app.models");
 
 exports.getTopics = (request, response, next) => {
   fetchTopics()
@@ -34,3 +34,14 @@ exports.getArticle = (request, response, next) =>{
     next(err)
   })
 }
+
+
+exports.getUsers = (request, response, next) => {
+  fetchUsers()
+  .then((users) => {
+    response.status(200).send({ users });
+  })
+  .catch((err) => {
+    next(err);
+  });
+};
