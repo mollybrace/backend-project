@@ -115,7 +115,7 @@ describe("GET /api/articles/:article_id", () => {
   })
 });
 
-describe.only("GET /api/articles/:article_id/comments", () => {
+describe("GET /api/articles/:article_id/comments", () => {
   test("200: Returns with an array of comments for the given article_id", () => {
     return request(app)
     .get("/api/articles/1/comments")
@@ -130,6 +130,15 @@ describe.only("GET /api/articles/:article_id/comments", () => {
       expect(comment).toHaveProperty("body", expect.any(String));
       expect(comment).toHaveProperty("article_id", expect.any(Number));
     })
+    })
+  })
+
+  test("200: Returns with an empty array for an article ID with no comments",() => {
+    return request(app)
+    .get("/api/articles/1/comments")
+    .expect(200)
+    .then(({body : {comments}}) => {
+     expect(comments).toBeInstanceOf(Array);
     })
   })
   test("400: Returns with invalid comments request if given an invalid data request (ie: not a number)", () =>{
