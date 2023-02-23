@@ -126,13 +126,7 @@ describe("GET: /api/users", () => {
           expect(user).toHaveProperty("username", expect.any(String));
           expect(user).toHaveProperty("name", expect.any(String));
           expect(user).toHaveProperty("avatar_url", expect.any(String));
-
-
-
-        })
-       
+        });
       });
   });
 });
-
-
