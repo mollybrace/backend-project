@@ -1,8 +1,7 @@
 const db = require("../db/connection");
 
 exports.fetchTopics = () => {
-  return db.query("SELECT * FROM topics;")
-  .then(({ rows }) => {
+  return db.query("SELECT * FROM topics;").then(({ rows }) => {
     return rows;
   });
 };
@@ -14,21 +13,28 @@ exports.fetchArticles = () => {
     )
     .then(({ rows }) => {
       rows.forEach((row) => {
-        row.comment_count = +row.comment_count
-      })
-      return rows
-    })
-    }
-    
-  exports.fetchArticle = (ArticleId) => {
+        row.comment_count = +row.comment_count;
+      });
+      return rows;
+    });
+};
+
+exports.fetchArticle = (articleId) => {
   return db
-  .query(
-    "SELECT * FROM articles WHERE article_id = $1;", [ArticleId]
-  )
+    .query("SELECT * FROM articles WHERE article_id = $1;", [articleId])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject("Article ID Not Found");
+      }
+      return rows;
+    });
+};
+
+exports.fetchComments = (articleId) => {
+  return db.query("SELECT * FROM comments WHERE article_id = $1;", [articleId])
   .then(({rows}) => {
-    if (rows.length === 0 ) {
-      return Promise.reject("Article ID Not Found")
-    }  
-      return rows
+    return rows
+
+    
   })
 };
