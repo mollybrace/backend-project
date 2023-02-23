@@ -3,6 +3,7 @@ const {
   getTopics,
   getArticles,
   getArticle,
+  deleteComment
 } = require("./controllers/app.controller");
 const {
   handle500s,
@@ -11,13 +12,15 @@ const {
 } = require("./controllers/errorhandling.controller");
 
 const app = express();
-//app.use(express.json());
+app.use(express.json());
 
 app.get("/api/topics", getTopics);
 
 app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id", getArticle);
+
+app.get("/api/comments/:comment_id", deleteComment);
 
 app.use((request, response, next) => {
   response.status(404).send({ msg: "Path Not Found" });

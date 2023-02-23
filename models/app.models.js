@@ -1,4 +1,6 @@
 const db = require("../db/connection");
+const format = require("pg-format");
+
 
 exports.fetchTopics = () => {
   return db.query("SELECT * FROM topics;")
@@ -7,11 +9,17 @@ exports.fetchTopics = () => {
   });
 };
 
-exports.fetchArticles = () => {
+exports.fetchArticles = (topic) => {
+  topic ??= "articles.article_id";
+  console.log(topic)
+
+  let queryString = format (
+    `SELECT articles.*, COUNT (comments.article_id) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY created_at DESC;`, 
+  )
+
+
   return db
-    .query(
-      "SELECT articles.*, COUNT(comments.article_id) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY created_at DESC;"
-    )
+    .query(queryString)
     .then(({ rows }) => {
       rows.forEach((row) => {
         row.comment_count = +row.comment_count
@@ -19,6 +27,9 @@ exports.fetchArticles = () => {
       return rows
     })
     }
+
+
+
     
   exports.fetchArticle = (ArticleId) => {
   return db
@@ -32,3 +43,11 @@ exports.fetchArticles = () => {
       return rows
   })
 };
+
+exports.removeComment =(comment_id) => {
+  return db.query("DELETE FROM comments WHERE comment_id= ($1)", [comment_id]
+  )
+  .then((rows)=> {
+    return rows
+  })
+}
