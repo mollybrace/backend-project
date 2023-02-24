@@ -54,6 +54,15 @@ exports.fetchArticles = (topic, sort_by = "created_at", order = "DESC") => {
 exports.fetchArticle = (ArticleId) => {
   return db
     .query("SELECT * FROM articles WHERE article_id = $1;", [ArticleId])
+    });
+};
+
+exports.fetchArticle = (article_id) => {
+  return db
+    .query("SELECT * FROM articles WHERE article_id = $1;", [article_id])
+exports.fetchArticle = (articleId) => {
+  return db
+    .query("SELECT * FROM articles WHERE article_id = $1;", [articleId])
     .then(({ rows }) => {
       if (rows.length === 0) {
         return Promise.reject("Article ID Not Found");
@@ -76,3 +85,52 @@ exports.removeComment = (comment_id) => {
       return rows;
     });
 };
+exports.insertComment = (body, username, article_id) => {
+  return db
+    .query(
+      "INSERT INTO comments (body, votes, author, article_id) VALUES ($1, $2,$3, $4) RETURNING *;",
+      [body, 0, username, article_id]
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};
+
+exports.updateArticle = (inc_votes, article_id) => {
+ 
+    return db
+      .query(
+        `UPDATE articles SET votes = votes + ($1) WHERE article_id = ($2) RETURNING *;`,
+        [inc_votes, article_id]
+      )
+      .then(({ rows }) => {
+        if( rows.length === 0) {
+          return Promise.reject("Article ID Not Found")
+
+        }
+          return rows[0];
+
+        
+      });
+  }
+
+/*
+if (article.length === 0) {
+        response.status(404).send(err)
+      }
+*/
+exports.fetchComments = (articleId) => {
+  return db.query("SELECT * FROM comments WHERE article_id = $1;", [articleId])
+  .then(({rows}) => {
+    return rows
+
+    
+  })
+};
+
+exports.fetchUsers = () => {
+  return db.query ("SELECT * FROM users;")
+  .then(({rows}) => {
+    return rows;
+  })
+}
