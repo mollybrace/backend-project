@@ -3,6 +3,7 @@ const {
   getTopics,
   getArticles,
   getArticle,
+  deleteComment
   getUsers,
   postComment,
   patchArticle,
@@ -23,6 +24,8 @@ app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id", getArticle);
+
+app.delete("/api/comments/:comment_id", deleteComment);
 
 app.get("/api/users", getUsers);
 app.post("/api/articles/:article_id/comments", postComment);

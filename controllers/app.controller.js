@@ -1,3 +1,5 @@
+const { fetchTopics, fetchArticles, fetchArticle, removeComment } = require("../models/app.models");
+
 const { response, request } = require("../app");
 const {
   fetchTopics,
@@ -21,6 +23,10 @@ exports.getTopics = (request, response, next) => {
 };
 
 exports.getArticles = (request, response, next) => {
+  const {topic, sort_by, order} = request.query
+  fetchArticles(topic, sort_by, order)
+  .then((articles) => {
+    response.status(200).send({articles})
   fetchArticles()
     .then((articles) => {
       response.status(200).send({ articles });
@@ -79,6 +85,14 @@ exports.getComments = (request, response, next) => {
   })
 }
 
+exports.deleteComment = (request, response, next) => {
+  const {comment_id} = request.params
+  removeComment(comment_id)
+  .then(() => {
+    response.status(204).send({})
+  })
+  .catch((err))
+}
 
 exports.getUsers = (request, response, next) => {
   fetchUsers()
