@@ -22,6 +22,9 @@ exports.fetchArticles = () => {
 exports.fetchArticle = (article_id) => {
   return db
     .query("SELECT * FROM articles WHERE article_id = $1;", [article_id])
+exports.fetchArticle = (articleId) => {
+  return db
+    .query("SELECT * FROM articles WHERE article_id = $1;", [articleId])
     .then(({ rows }) => {
       if (rows.length === 0) {
         return Promise.reject("Article ID Not Found");
@@ -64,3 +67,11 @@ if (article.length === 0) {
         response.status(404).send(err)
       }
 */
+exports.fetchComments = (articleId) => {
+  return db.query("SELECT * FROM comments WHERE article_id = $1;", [articleId])
+  .then(({rows}) => {
+    return rows
+
+    
+  })
+};

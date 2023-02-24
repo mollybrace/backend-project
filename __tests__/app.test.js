@@ -104,6 +104,51 @@ describe("GET /api/articles/:article_id", () => {
         expect(body.msg).toBe("Invalid Request");
       });
   });
+   
+   test("404: Returns with article ID not found if given a request of the correct data type that does not exist", () => {
+    return request(app)
+    .get("/api/articles/3000")
+    .expect(404)
+    .then((response) =>{
+     expect(response.body.msg).toBe("Article ID Not Found")
+   })
+  })
+});
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200: Returns with an array of comments for the given article_id", () => {
+    return request(app)
+    .get("/api/articles/1/comments")
+    .expect(200)
+    .then(({body : {comments}}) => {
+     expect(comments).toBeInstanceOf(Array);    
+    comments.forEach((comment) => {
+      expect(comment).toHaveProperty("comment_id", expect.any(Number));
+      expect(comment).toHaveProperty("votes", expect.any(Number));
+      expect(comment).toHaveProperty("created_at", expect.any(String));
+      expect(comment).toHaveProperty("author", expect.any(String));
+      expect(comment).toHaveProperty("body", expect.any(String));
+      expect(comment).toHaveProperty("article_id", expect.any(Number));
+    })
+    })
+  })
+
+  test("200: Returns with an empty array for an article ID with no comments",() => {
+    return request(app)
+    .get("/api/articles/1/comments")
+    .expect(200)
+    .then(({body : {comments}}) => {
+     expect(comments).toBeInstanceOf(Array);
+    })
+  })
+  test("400: Returns with invalid comments request if given an invalid data request (ie: not a number)", () =>{
+    return request(app)
+    .get("/api/articles/invalid_id/comments")
+    .expect(400)
+    .then((response) => {
+      expect(response.body.msg).toBe("Invalid Request")
+    })
+  })
   test("404: Returns with article ID not found if given a request of the correct data type that does not exist", () => {
     return request(app)
       .get("/api/articles/3000")
@@ -176,7 +221,7 @@ describe("POST: /api/articles/:article_id/comments", () => {
 })
 
 
-describe.only("PATCH /api/articles/:article_id", () => {
+describe("PATCH /api/articles/:article_id", () => {
   test("202: Responds with updated article with votes updated ", () => {
     const newVotesPatch = {
       inc_votes: 50,
@@ -233,3 +278,9 @@ test("400: respond with bad request if post body contains missing field", () => 
   })
 })
 })
+ })
+});
+
+
+
+

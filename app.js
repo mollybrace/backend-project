@@ -5,6 +5,7 @@ const {
   getArticle,
   postComment,
   patchArticle,
+  getComments
 } = require("./controllers/app.controller");
 const {
   handle500s,
@@ -25,6 +26,7 @@ app.get("/api/articles/:article_id", getArticle);
 app.post("/api/articles/:article_id/comments", postComment);
 
 app.patch("/api/articles/:article_id", patchArticle)
+app.get("/api/articles/:article_id/comments", getComments);
 
 app.use((request, response, next) => {
   console.log()

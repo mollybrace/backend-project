@@ -6,6 +6,8 @@ const {
   insertComment,
   updateArticle,
 } = require("../models/app.models");
+const { response } = require("../app");
+const { fetchTopics, fetchArticles, fetchArticle, fetchComments } = require("../models/app.models");
 
 exports.getTopics = (request, response, next) => {
   fetchTopics()
@@ -63,3 +65,15 @@ exports.patchArticle = (request, response, next) => {
       next(err);
     });
 };
+exports.getComments = (request, response, next) => {
+  const articleId = request.params
+  const {article_id} = articleId
+  console.log(article_id)
+  fetchComments(article_id)
+  .then((comments)=> {
+    response.status(200).send({comments})
+  })
+  .catch((err) => {
+    next(err)
+  })
+}
