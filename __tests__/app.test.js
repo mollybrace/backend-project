@@ -3,7 +3,6 @@ const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
 const connection = require("../db/connection");
 const app = require("../app");
-const { response } = require("../app");
 require("jest-sorted");
 
 beforeEach(() => {
@@ -115,34 +114,65 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
-// describe.only("GET /api/articles?topic=", () => {
-//   test("200: Responds with articles with the correct keys", () => {
+describe.only("GET /api/articles?topic=", () => {
+  test("200:  filters by topic", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toHaveLength(11);
+        expect(articles).toBeInstanceOf(Array);
+        articles.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+        });
+      });
+  });
+  test("200: Responds with articles sorted by any valid column (defaults to date)", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("author", { descending: true });
+      });
+  });
+  test("200: Sorts by order ascending when specified and defaults to descending", () => {
+    return request(app)
+      .get("/api/articles?order=ASC")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("created_at", { descending: false });
+      });
+  });
+//   test("400: responds with an error message when given a non existent topic", () => {
 //     return request(app)
-//       .get("/api/articles?topic=mitch")
-//       .expect(200)
-//       .then(({ body: { articles } }) => {
-//         expect(articles).toHaveLength(11);
-//         expect(articles).toBeInstanceOf(Array);
-//         articles.forEach((article) => {
-//           expect(article.topic).toBe("mitch");
-//         });
-//       });
-//   });
+//     .get('/api/articles?topic=invalid_topic')
+//     .expect(404)
+//     .then(({body}) => {
+//       expect(body.msg).toBe("Topic does not exist")
+//   })
 // });
+})
 
 /*
 topic, which filters the articles by the topic value specified in the query. If the query is omitted the endpoint should respond with all articles.
 */
 
+describe("DELETE: /api/comments/:comment_id", () => {
+  test("removes the given comment by comment_id", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
 
-// describe("DELETE: /api/comments/:comment_id",() => {
-//   test("removes the given object", () => {
-//     return request(app)
-//     .delete("/api/comments/1")
-//     .expect(204)
-//     .then((response) => {
-//       expect(response.body.msg).toBe("");
-//     });
-// });
-// });
-
+  // test("404: Responds with an error if the comment_id does not exist", () => {
+  //   return request(app)
+  //     .delete("/api/comments/3000")
+  //     .expect(404)
+  //     .then(({ body }) => {
+  //       expect(body.msg).toBe("helloo");
+  //     });
+  // });
+})

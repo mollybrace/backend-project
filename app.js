@@ -20,7 +20,7 @@ app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id", getArticle);
 
-app.get("/api/comments/:comment_id", deleteComment);
+app.delete("/api/comments/:comment_id", deleteComment);
 
 app.use((request, response, next) => {
   response.status(404).send({ msg: "Path Not Found" });

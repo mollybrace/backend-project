@@ -1,4 +1,3 @@
-const { response, request } = require("../app");
 const { fetchTopics, fetchArticles, fetchArticle, removeComment } = require("../models/app.models");
 
 exports.getTopics = (request, response, next) => {
@@ -12,8 +11,8 @@ exports.getTopics = (request, response, next) => {
 };
 
 exports.getArticles = (request, response, next) => {
-  const {topic} = request.query
-  fetchArticles(topic)
+  const {topic, sort_by, order} = request.query
+  fetchArticles(topic, sort_by, order)
   .then((articles) => {
     response.status(200).send({articles})
   })
@@ -39,8 +38,8 @@ exports.getArticle = (request, response, next) =>{
 exports.deleteComment = (request, response, next) => {
   const {comment_id} = request.params
   removeComment(comment_id)
-  .then((comment) => {
-    response.status(204).send({msg: "No Content"})
+  .then(() => {
+    response.status(204).send({})
   })
-  .catch((console.log("No Content")))
+  .catch((err))
 }
