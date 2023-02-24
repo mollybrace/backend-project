@@ -100,6 +100,13 @@ describe("GET /api/articles/:article_id", () => {
     return request(app)
       .get("/api/articles/invalid_article_id")
       .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Invalid Request");
+      });
+  });
+    return request(app)
+      .get("/api/articles/invalid_article_id")
+      .expect(400)
       .then(({body}) => {
         expect(body.msg).toBe("Invalid Request");
       });
@@ -153,12 +160,30 @@ describe("GET /api/articles/:article_id/comments", () => {
     return request(app)
       .get("/api/articles/3000")
       .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Article ID Not Found");
+=======
       .then(({body}) => {
         expect(body.msg).toBe("Article ID Not Found");
       });
   });
 });
 
+describe("GET: /api/users", () => {
+  test("200: Returns with a users containing the correct keys", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body: { users } }) => {
+        expect(users).toHaveLength(4);
+        expect(users).toBeInstanceOf(Array);
+        users.forEach((user) => {
+          expect(user).toHaveProperty("username", expect.any(String));
+          expect(user).toHaveProperty("name", expect.any(String));
+          expect(user).toHaveProperty("avatar_url", expect.any(String));
+        });
+      });
+  });
 describe("POST: /api/articles/:article_id/comments", () => {
   test("201:Responds with newly created comment object", () => {
     const newComment = {
