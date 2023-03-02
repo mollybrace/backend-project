@@ -20,7 +20,16 @@ exports.handleCustomErrors = (error, request, response, next) =>{
     if ( error === "Invalid Request"){
         response.status(404).send({msg: "Path Not Found"})
     }
+    if (error === "Topic does not exist"){
+        response.status(404).send({msg: "Topic does not exist"})
+    }
 
+    if(error=== "Invalid sort_by") {
+        response.status(400).send({msg: "Invalid sort by"})
+    }
+    if (error === "invalid order") {
+        response.status(400).send({msg: "invalid order"})
+    }
     else {
         next(error)
     }

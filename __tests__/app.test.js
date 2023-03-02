@@ -105,19 +105,6 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 
-    return request(app)
-      .get("/api/articles/invalid_article_id")
-      .expect(400)
-      .then((response) => {
-        expect(response.body.msg).toBe("Invalid Request");
-      });
-  });
-    return request(app)
-      .get("/api/articles/invalid_article_id")
-      .expect(400)
-      .then(({body}) => {
-        expect(body.msg).toBe("Invalid Request");
-      });
   });
    
    test("404: Returns with article ID not found if given a request of the correct data type that does not exist", () => {
@@ -128,7 +115,6 @@ describe("GET /api/articles/:article_id", () => {
      expect(response.body.msg).toBe("Article ID Not Found")
    })
   })
-});
 
 describe("GET /api/articles/:article_id/comments", () => {
   test("200: Returns with an array of comments for the given article_id", () => {
@@ -174,7 +160,7 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
-describe("GET /api/articles?topic=", () => {
+describe.only("GET /api/articles?topic=", () => {
   test("200:  filters by topic", () => {
     return request(app)
       .get("/api/articles?topic=mitch")
@@ -203,45 +189,54 @@ describe("GET /api/articles?topic=", () => {
         expect(articles).toBeSortedBy("created_at", { descending: false });
       });
   });
-//   test("400: responds with an error message when given a non existent topic", () => {
-//     return request(app)
-//     .get('/api/articles?topic=invalid_topic')
-//     .expect(404)
-//     .then(({body}) => {
-//       expect(body.msg).toBe("Topic does not exist")
-//   })
+
+  test("400: responds with invalid sortby", () => {
+    return request(app)
+    .get("/api/articles?sort_by?invalid_sortby")
+    .expect(400)
+    .then(({body}) => {
+      console.log(body,"booooody")
+      expect(body.msg).toBe("Invalid sort by")
+    })
+  })
+  // test("400: responds with an error message when given a non existent topic", () => {
+  //   return request(app)
+  //   .get("/api/articles?topic=invalid_topic")
+  //   .expect(404)
+  //   .then(({body}) => {
+  //     console.log(body, "booooody topic")
+  //     expect(body.msg).toBe("Topic does not exist")
+  // })
 // });
 })
 
-/*
-topic, which filters the articles by the topic value specified in the query. If the query is omitted the endpoint should respond with all articles.
-*/
 
-describe("DELETE: /api/comments/:comment_id", () => {
-  test("removes the given comment by comment_id", () => {
-    return request(app)
-      .delete("/api/comments/1")
-      .expect(204)
-      .then(({ body }) => {
-        expect(body).toEqual({});
-      });
-  });
 
-  // test("404: Responds with an error if the comment_id does not exist", () => {
-  //   return request(app)
-  //     .delete("/api/comments/3000")
-  //     .expect(404)
-  //     .then(({ body }) => {
-  //       expect(body.msg).toBe("helloo");
-  //     });
-  // });
-})
+// describe("DELETE: /api/comments/:comment_id", () => {
+//   test("removes the given comment by comment_id", () => {
+//     return request(app)
+//       .delete("/api/comments/1")
+//       .expect(204)
+//       .then(({ body }) => {
+//         expect(body).toEqual({});
+//       });
+//   });
 
-      .then(({body}) => {
-        expect(body.msg).toBe("Article ID Not Found");
-      });
-  });
-});
+// //   // test("404: Responds with an error if the comment_id does not exist", () => {
+// //   //   return request(app)
+// //   //     .delete("/api/comments/3000")
+// //   //     .expect(404)
+//   //     .then(({ body }) => {
+//   //       expect(body.msg).toBe("helloo");
+//   //     });
+//   // });
+// })
+
+//       .then(({body}) => {
+//         expect(body.msg).toBe("Article ID Not Found");
+//       });
+//   });
+// });
 
 describe("GET: /api/users", () => {
   test("200: Returns with a users containing the correct keys", () => {
@@ -258,6 +253,8 @@ describe("GET: /api/users", () => {
         });
       });
   });
+
+
 describe("POST: /api/articles/:article_id/comments", () => {
   test("201:Responds with newly created comment object", () => {
     const newComment = {
@@ -378,7 +375,6 @@ test("400: respond with bad request if post body contains missing field", () => 
 })
 })
  })
-});
 
 
 

@@ -19,7 +19,17 @@ exports.fetchArticles = (topic, sort_by = "created_at", order = "DESC") => {
     "article_img_url",
     "article_id",
   ];
-  let queryString = `SELECT articles.article_id, articles.author, articles.created_at, articles.title, articles.topic, articles.votes,
+
+  if (!validQueries.includes(sort_by)) {
+    console.log(validQueries)
+    return Promise.reject({ status: 400, msg: "Invalid sort_by" })
+  }
+  
+  if (!['asc', 'desc'].includes) {
+    return Promise.reject({ status: 400, msg: 'Invalid order query' })
+  }
+  
+  let queryString = `SELECT articles.article_id, articles.author, articles.created_at, articles.title, articles.topic, articles.votes, articles.article_img_url,
     COUNT (comments.article_id) AS comment_count FROM articles
     LEFT JOIN comments 
     ON articles.article_id = comments.article_id`;
@@ -35,13 +45,11 @@ exports.fetchArticles = (topic, sort_by = "created_at", order = "DESC") => {
   GROUP BY articles.article_id 
   ORDER BY ${sort_by} ${order};`;
 
-  console.log(queryString);
 
   return db.query(queryString, queryValues).then(({ rows }) => {
     if (rows.length === 0) {
       return Promise.reject({ status: 404, msg: "Topic does not exist" });
     } else {
-      console.log(rows.length);
       rows.forEach((row) => {
         row.comment_count = +row.comment_count;
       });
@@ -51,15 +59,6 @@ exports.fetchArticles = (topic, sort_by = "created_at", order = "DESC") => {
 };
 
 
-exports.fetchArticle = (ArticleId) => {
-  return db
-    .query("SELECT * FROM articles WHERE article_id = $1;", [ArticleId])
-    });
-};
-
-exports.fetchArticle = (article_id) => {
-  return db
-    .query("SELECT * FROM articles WHERE article_id = $1;", [article_id])
 exports.fetchArticle = (articleId) => {
   return db
     .query("SELECT * FROM articles WHERE article_id = $1;", [articleId])
@@ -114,11 +113,7 @@ exports.updateArticle = (inc_votes, article_id) => {
       });
   }
 
-/*
-if (article.length === 0) {
-        response.status(404).send(err)
-      }
-*/
+
 exports.fetchComments = (articleId) => {
   return db.query("SELECT * FROM comments WHERE article_id = $1;", [articleId])
   .then(({rows}) => {
