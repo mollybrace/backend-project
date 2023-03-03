@@ -3,6 +3,7 @@ const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
 const connection = require("../db/connection");
 const app = require("../app");
+const { response } = require("../app");
 require("jest-sorted");
 
 beforeEach(() => {
@@ -160,7 +161,7 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
-describe.only("GET /api/articles?topic=", () => {
+describe("GET /api/articles?topic=", () => {
   test("200:  filters by topic", () => {
     return request(app)
       .get("/api/articles?topic=mitch")
@@ -192,36 +193,42 @@ describe.only("GET /api/articles?topic=", () => {
 
   test("400: responds with invalid sortby", () => {
     return request(app)
-    .get("/api/articles?sort_by?invalid_sortby")
+    .get("/api/articles?sort_by=invalid_sortby")
     .expect(400)
-    .then(({body}) => {
-      console.log(body,"booooody")
-      expect(body.msg).toBe("Invalid sort by")
+    .then(({body: {msg}}) => {
+      expect(msg).toBe("Invalid sort by")
     })
   })
-  // test("400: responds with an error message when given a non existent topic", () => {
-  //   return request(app)
-  //   .get("/api/articles?topic=invalid_topic")
-  //   .expect(404)
-  //   .then(({body}) => {
-  //     console.log(body, "booooody topic")
-  //     expect(body.msg).toBe("Topic does not exist")
-  // })
-// });
+  test("404: responds with an error message when given a non existent topic", () => {
+    return request(app)
+    .get("/api/articles?topic=invalid_topic")
+    .expect(404)
+    .then(({body: {msg}}) => {
+      expect(msg).toBe("Topic does not exist")
+  })
+});
+
+test("400: responds with invalid order", () => {
+  return request(app)
+  .get("/api/articles?order=invalid_order")
+  .expect(400)
+  .then(({body}) => {
+    expect(body.msg).toBe("Invalid order query")
+  })
+})
 })
 
-
-
 // describe("DELETE: /api/comments/:comment_id", () => {
-//   test("removes the given comment by comment_id", () => {
+//   test("removes the given comment by comment id",() => {
 //     return request(app)
-//       .delete("/api/comments/1")
-//       .expect(204)
-//       .then(({ body }) => {
-//         expect(body).toEqual({});
-//       });
-//   });
-
+//     .delete("/api/comments/1")
+//     .expect(204)
+//     .then((response) => {
+//       console.log(response)
+//       expect(response).toBe("not sure")
+//     })
+//   })
+// })
 // //   // test("404: Responds with an error if the comment_id does not exist", () => {
 // //   //   return request(app)
 // //   //     .delete("/api/comments/3000")
@@ -347,7 +354,6 @@ describe("PATCH /api/articles/:article_id", () => {
         .send(newVotesPatch)
         .expect(404)
         .then(({body}) => {
-          console.log(body.msg)
           expect(body.msg).toBe("Article ID Not Found");
         });
   });
@@ -375,6 +381,7 @@ test("400: respond with bad request if post body contains missing field", () => 
 })
 })
  })
+
 
 
 

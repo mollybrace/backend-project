@@ -7,6 +7,17 @@ exports.fetchTopics = () => {
   });
 };
 
+exports.fetchArticle = (articleId) => {
+  return db
+    .query("SELECT * FROM articles WHERE article_id = $1;", [articleId])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject("Article ID Not Found");
+      }
+      return rows;
+    });
+};
+
 exports.fetchArticles = (topic, sort_by = "created_at", order = "DESC") => {
   const validQueries = [
     "title",
@@ -21,12 +32,11 @@ exports.fetchArticles = (topic, sort_by = "created_at", order = "DESC") => {
   ];
 
   if (!validQueries.includes(sort_by)) {
-    console.log(validQueries)
-    return Promise.reject({ status: 400, msg: "Invalid sort_by" })
+    return Promise.reject("Invalid sort_by")
   }
   
   if (!['asc', 'desc'].includes) {
-    return Promise.reject({ status: 400, msg: 'Invalid order query' })
+    return Promise.reject('Invalid order query')
   }
   
   let queryString = `SELECT articles.article_id, articles.author, articles.created_at, articles.title, articles.topic, articles.votes, articles.article_img_url,
@@ -48,7 +58,7 @@ exports.fetchArticles = (topic, sort_by = "created_at", order = "DESC") => {
 
   return db.query(queryString, queryValues).then(({ rows }) => {
     if (rows.length === 0) {
-      return Promise.reject({ status: 404, msg: "Topic does not exist" });
+      return Promise.reject("Topic does not exist");
     } else {
       rows.forEach((row) => {
         row.comment_count = +row.comment_count;
@@ -59,16 +69,7 @@ exports.fetchArticles = (topic, sort_by = "created_at", order = "DESC") => {
 };
 
 
-exports.fetchArticle = (articleId) => {
-  return db
-    .query("SELECT * FROM articles WHERE article_id = $1;", [articleId])
-    .then(({ rows }) => {
-      if (rows.length === 0) {
-        return Promise.reject("Article ID Not Found");
-      }
-      return rows;
-    });
-};
+
 
 exports.removeComment = (comment_id) => {
   return db
@@ -76,14 +77,19 @@ exports.removeComment = (comment_id) => {
       comment_id,
     ])
     .then(({ rows }) => {
+      console.log(rows, "ROWS")
       {
         if (rows.length === 0) {
-          return Promise.reject({ status: 404, msg: "Comment does not exist" });
+          return Promise.reject("Comment does not exist" );
         }
       }
       return rows;
     });
 };
+
+
+
+
 exports.insertComment = (body, username, article_id) => {
   return db
     .query(
@@ -95,8 +101,11 @@ exports.insertComment = (body, username, article_id) => {
     });
 };
 
+
+
+
+
 exports.updateArticle = (inc_votes, article_id) => {
- 
     return db
       .query(
         `UPDATE articles SET votes = votes + ($1) WHERE article_id = ($2) RETURNING *;`,
@@ -108,8 +117,7 @@ exports.updateArticle = (inc_votes, article_id) => {
 
         }
           return rows[0];
-
-        
+  
       });
   }
 

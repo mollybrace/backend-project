@@ -1,4 +1,3 @@
-
 const {
   fetchTopics,
   fetchArticles,
@@ -7,9 +6,8 @@ const {
   updateArticle,
   fetchComments,
   fetchUsers,
-  removeComment
+  removeComment,
 } = require("../models/app.models");
-
 
 exports.getTopics = (request, response, next) => {
   fetchTopics()
@@ -23,16 +21,13 @@ exports.getTopics = (request, response, next) => {
 
 exports.getArticles = (request, response, next) => {
   const { topic, sort_by, order } = request.query;
-  fetchArticles(topic, sort_by, order).then((articles) => {
-    response.status(200).send({ articles });
-    fetchArticles()
-      .then((articles) => {
-        response.status(200).send({ articles });
-      })
-      .catch((err) => {
-        next(err);
-      });
-  });
+  fetchArticles(topic, sort_by, order)
+    .then((articles) => {
+      response.status(200).send({ articles });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
 
 exports.getArticle = (request, response, next) => {
@@ -73,7 +68,6 @@ exports.patchArticle = (request, response, next) => {
 exports.getComments = (request, response, next) => {
   const articleId = request.params;
   const { article_id } = articleId;
-  console.log(article_id);
   fetchComments(article_id)
     .then((comments) => {
       response.status(200).send({ comments });
@@ -86,11 +80,12 @@ exports.getComments = (request, response, next) => {
 exports.deleteComment = (request, response, next) => {
   const { comment_id } = request.params;
   removeComment(comment_id)
-    .then(() => {
-      response.status(204).send({});
+    .then((comment) => {
+      response.status(204).send({comment});
     })
-    .catch(err);
-    next (err)
+    .catch((err) => {
+      next(err);
+    });
 };
 
 exports.getUsers = (request, response, next) => {
@@ -99,7 +94,6 @@ exports.getUsers = (request, response, next) => {
       response.status(200).send({ users });
     })
     .catch((err) => {
-      console.log(err)
       next(err);
     });
 };
