@@ -1,3 +1,4 @@
+const { response } = require("../app");
 const {
   fetchTopics,
   fetchArticles,
@@ -7,6 +8,7 @@ const {
   fetchComments,
   fetchUsers,
   removeComment,
+  updateComment,
 } = require("../models/app.models");
 
 exports.getTopics = (request, response, next) => {
@@ -97,3 +99,16 @@ exports.getUsers = (request, response, next) => {
       next(err);
     });
 };
+
+exports.patchComment = (request, response, next)=> {
+  const { inc_votes } = request.body;
+  const { comment_id } = request.params;
+  updateComment(inc_votes, comment_id).then((comment) =>{
+    response.status(202).send({ comment })
+  })
+  .catch((err) => {
+    next(err);
+  });
+}
+
+

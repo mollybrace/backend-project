@@ -7,7 +7,8 @@ const {
   getUsers,
   postComment,
   patchArticle,
-  getComments
+  getComments,
+  patchComment,
 } = require("./controllers/app.controller");
 const {
   handle500s,
@@ -37,9 +38,10 @@ app.patch("/api/articles/:article_id", patchArticle)
 
 app.get("/api/articles/:article_id/comments", getComments);
 
+app.patch("/api/comments/:comment_id", patchComment);
+
 app.use((request, response, next) => {
-  console.log()
-  response.status(404).send({ msg: "Path Not Found" });
+  response.status(404).send({ msg: "Path Not Found" })
 });
 
 app.use(handlePSQL400s);

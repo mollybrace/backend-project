@@ -10,7 +10,6 @@ exports.handlePSQL400s = (error, request, response, next) => {
     if (error.code === "42601"){
         response.status(400).send({msg: "Invalid order query"})
     }
-
     else  {
         next(error)
     }
@@ -31,6 +30,9 @@ exports.handleCustomErrors = (error, request, response, next) =>{
     }
     if (error === "Invalid order query") {
         response.status(400).send({msg: "invalid order"})
+    }
+    if (error === "comment ID Not Found") {
+        response.status(404).send({msg: "Comment ID Not Found"})
     }
     else {
         next(error)

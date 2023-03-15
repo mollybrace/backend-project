@@ -218,32 +218,6 @@ test("400: responds with invalid order", () => {
 })
 })
 
-// describe("DELETE: /api/comments/:comment_id", () => {
-//   test("removes the given comment by comment id",() => {
-//     return request(app)
-//     .delete("/api/comments/1")
-//     .expect(204)
-//     .then((response) => {
-//       console.log(response)
-//       expect(response).toBe("not sure")
-//     })
-//   })
-// })
-// //   // test("404: Responds with an error if the comment_id does not exist", () => {
-// //   //   return request(app)
-// //   //     .delete("/api/comments/3000")
-// //   //     .expect(404)
-//   //     .then(({ body }) => {
-//   //       expect(body.msg).toBe("helloo");
-//   //     });
-//   // });
-// })
-
-//       .then(({body}) => {
-//         expect(body.msg).toBe("Article ID Not Found");
-//       });
-//   });
-// });
 
 describe("GET: /api/users", () => {
   test("200: Returns with a users containing the correct keys", () => {
@@ -290,7 +264,7 @@ describe("POST: /api/articles/:article_id/comments", () => {
       username: "butter_bridge",
     };
     return request(app)
-      .post("/api/articles/invalid_article_id/comments")
+    .post("/api/articles/invalid_article_id/comments")
       .send(newComment)
       .expect(400)
       .then((response) => {
@@ -310,7 +284,7 @@ describe("POST: /api/articles/:article_id/comments", () => {
       .then(({body}) => {
         expect(body.msg).toBe("Path Not Found");
       });
-  });
+    });
   test("400: respond with bad request if post body contains missing field", () => {
     const newComment = {
       body: "this is the new body",
@@ -362,27 +336,95 @@ describe("PATCH /api/articles/:article_id", () => {
       inc_votes: 50,
     };
     return request(app)
-      .patch("/api/articles/invalid_article_id")
-      .send(newVotesPatch)
-      .expect(400)
+    .patch("/api/articles/invalid_article_id")
+    .send(newVotesPatch)
+    .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe("Invalid Request");
       });    
-})
-
+    })
+    
 test("400: respond with bad request if post body contains missing field", () => {
   const newVotesPatch = {
   };
-  return request(app).post("/api/articles/1/comments")
+  return request(app).patch("/api/articles/1")
   .send(newVotesPatch)
   .expect(400).then(({body}) => {
     expect(body.msg).toBe("Missing Fields")
   })
 })
 })
- })
+})
+
+describe("PATCH /api/comments/:comment_id", () => {
+  test("202: Responds with updated comments with votes updated ", () => {
+    const newCommentsPatch = {
+      inc_votes: 50,
+    };
+    return request(app)
+    .patch("/api/comments/7")
+    .send(newCommentsPatch)
+    .expect(202)
+    .then(({body: {comment}} ) => {  
+        expect(comment).toHaveProperty("comment_id", expect.any(Number));
+        expect(comment).toHaveProperty("body", expect.any(String));
+        expect(comment).toHaveProperty("article_id", expect.any(Number));
+        expect(comment).toHaveProperty("author", expect.any(String));
+        expect(comment).toHaveProperty("votes", expect.any(Number));
+        expect(comment).toHaveProperty("created_at", expect.any(String));
+        expect(comment.votes).toBe(50)
+      })
+  })
+  test("404: Returns with comment ID not found if given a request of the correct data type that does not exist", () => {
+    const newCommentsPatch = {
+      inc_votes: 50,
+    };
+    return request(app)
+      .patch("/api/comments/3000")
+      .send(newCommentsPatch)
+      .expect(404)
+      .then(({body}) => {
+        expect(body.msg).toBe("Comment ID Not Found");
+      });
+});
+test("400: Returns with invalid request if given an invalid data request (ie: not a number)", () => {
+  const newCommentsPatch = {
+    inc_votes: 50,
+  };
+  return request(app)
+  .patch("/api/comments/invalid_comment_id")
+  .send(newCommentsPatch)
+  .expect(400)
+    .then((response) => {
+      expect(response.body.msg).toBe("Invalid Request");
+    });    
+  })
+})
 
 
+
+
+
+// describe("DELETE: /api/comments/:comment_id", () => {
+//   test("removes the given comment by comment id",() => {
+//     return request(app)
+//     .delete("/api/comments/1")
+//     .expect(204)
+//     .then((response) => {
+//       console.log(response)
+//       expect(response).toBe("not sure")
+//     })
+//   })
+// })
+// // //   // test("404: Responds with an error if the comment_id does not exist", () => {
+// // //   //   return request(app)
+// // //   //     .delete("/api/comments/3000")
+// // //   //     .expect(404)
+// //   //     .then(({ body }) => {
+// //   //       expect(body.msg).toBe("helloo");
+// //   //     });
+// //   // });
+// // })
 
 
 
