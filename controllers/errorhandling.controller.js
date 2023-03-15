@@ -40,5 +40,8 @@ exports.handleCustomErrors = (error, request, response, next) =>{
 }
 
 exports.handle500s = (error, request, response, next) => {
+    console.log(error)
+    console.log(request)
+    console.log(response)
     response.status(500).send({ msg: "Internal server error"})
 }
