@@ -1,18 +1,18 @@
-Initial setup:
+# Initial setup:
 
-Create environment variables
+## Create environment variables
 
-file name 1: 
+### file name 1: 
 .env.development
 Containing: 
 PGDATABASE=nc_news
 
-File name 2: 
+### File name 2: 
 .env.test
 Containing: 
 PGDATABASE=nc_news_test
 
-To install: 
+## Dependencies: 
 supertest: npm install supertest
 Jest- npm install jest
 Husky: npm install husky
